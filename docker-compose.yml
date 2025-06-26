@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  hebrew-text-editor:
+    build: .
+    container_name: hebrew-text-editor
+    ports:
+      - "4051:80"
+    restart: unless-stopped
+    networks:
+      - hebrew-editor-network
+
+networks:
+  hebrew-editor-network:
+    driver: bridge

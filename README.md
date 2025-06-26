@@ -82,11 +82,60 @@ hebrew_text_editor/
 
 ## Installation
 
+### Option 1: Direct Browser Usage
 No installation required! Simply:
 
 1. Clone or download this repository
 2. Open `index.html` in your web browser
 3. Start editing Hebrew text files
+
+### Option 2: Docker Deployment (Recommended for Network Access)
+
+#### Quick Start with Docker Compose
+```bash
+# Clone the repository
+git clone <repository-url>
+cd hebrew_text_editor
+
+# Build and run with Docker Compose
+docker-compose up -d
+
+# Access the application
+# Local: http://localhost:4051
+# Network: http://<your-ip>:4051
+```
+
+#### Manual Docker Build
+```bash
+# Build the Docker image
+docker build -t hebrew-text-editor .
+
+# Run the container
+docker run -d -p 4051:80 --name hebrew-text-editor hebrew-text-editor
+
+# Access the application at http://localhost:4051
+```
+
+#### Network Access
+Once running with Docker, the application will be accessible to any device on your local network:
+- Find your machine's IP address: `ip addr show` (Linux) or `ipconfig` (Windows)
+- Access from any device: `http://<your-machine-ip>:4051`
+
+#### Docker Management
+```bash
+# Stop the container
+docker-compose down
+# or
+docker stop hebrew-text-editor
+
+# View logs
+docker-compose logs
+# or
+docker logs hebrew-text-editor
+
+# Rebuild after changes
+docker-compose up --build -d
+```
 
 ## License
 
