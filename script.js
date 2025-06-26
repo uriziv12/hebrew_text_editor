@@ -1,3 +1,116 @@
+// Custom Scrollbar Handler
+class CustomScrollbar {
+    constructor(textEditor) {
+        this.textEditor = textEditor;
+        this.scrollTrack = document.querySelector('.scroll-track');
+        this.scrollThumb = document.querySelector('.scroll-thumb');
+        this.customScrollbar = document.querySelector('.custom-scrollbar');
+        
+        this.isDragging = false;
+        this.startY = 0;
+        this.startScrollTop = 0;
+        
+        this.initializeScrollbar();
+    }
+    
+    initializeScrollbar() {
+        if (!this.scrollTrack || !this.scrollThumb || !this.textEditor) return;
+        
+        // Update scrollbar on text editor scroll
+        this.textEditor.addEventListener('scroll', () => this.updateScrollbar());
+        
+        // Handle scrollbar interactions
+        this.scrollThumb.addEventListener('mousedown', (e) => this.startDrag(e));
+        this.scrollTrack.addEventListener('click', (e) => this.handleTrackClick(e));
+        
+        // Touch events for mobile
+        this.scrollThumb.addEventListener('touchstart', (e) => this.startDrag(e), { passive: false });
+        
+        // Global mouse/touch events
+        document.addEventListener('mousemove', (e) => this.handleDrag(e));
+        document.addEventListener('mouseup', () => this.endDrag());
+        document.addEventListener('touchmove', (e) => this.handleDrag(e), { passive: false });
+        document.addEventListener('touchend', () => this.endDrag());
+        
+        // Update scrollbar on content change
+        this.textEditor.addEventListener('input', () => {
+            setTimeout(() => this.updateScrollbar(), 0);
+        });
+        
+        // Initial update
+        setTimeout(() => this.updateScrollbar(), 100);
+    }
+    
+    updateScrollbar() {
+        const { scrollTop, scrollHeight, clientHeight } = this.textEditor;
+        
+        if (scrollHeight <= clientHeight) {
+            this.scrollThumb.style.display = 'none';
+            return;
+        }
+        
+        this.scrollThumb.style.display = 'block';
+        
+        const trackHeight = this.scrollTrack.clientHeight;
+        const thumbHeight = Math.max(20, (clientHeight / scrollHeight) * trackHeight);
+        const thumbTop = (scrollTop / (scrollHeight - clientHeight)) * (trackHeight - thumbHeight);
+        
+        this.scrollThumb.style.height = `${thumbHeight}px`;
+        this.scrollThumb.style.top = `${thumbTop}px`;
+    }
+    
+    startDrag(e) {
+        e.preventDefault();
+        this.isDragging = true;
+        
+        const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+        this.startY = clientY;
+        this.startScrollTop = this.textEditor.scrollTop;
+        
+        this.scrollThumb.style.cursor = 'grabbing';
+        document.body.style.userSelect = 'none';
+    }
+    
+    handleDrag(e) {
+        if (!this.isDragging) return;
+        
+        e.preventDefault();
+        const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+        const deltaY = clientY - this.startY;
+        
+        const trackHeight = this.scrollTrack.clientHeight;
+        const thumbHeight = this.scrollThumb.clientHeight;
+        const scrollableHeight = this.textEditor.scrollHeight - this.textEditor.clientHeight;
+        
+        const scrollRatio = deltaY / (trackHeight - thumbHeight);
+        const newScrollTop = this.startScrollTop + (scrollRatio * scrollableHeight);
+        
+        this.textEditor.scrollTop = Math.max(0, Math.min(scrollableHeight, newScrollTop));
+    }
+    
+    endDrag() {
+        if (!this.isDragging) return;
+        
+        this.isDragging = false;
+        this.scrollThumb.style.cursor = 'grab';
+        document.body.style.userSelect = '';
+    }
+    
+    handleTrackClick(e) {
+        if (e.target === this.scrollThumb) return;
+        
+        const rect = this.scrollTrack.getBoundingClientRect();
+        const clickY = e.clientY - rect.top;
+        const trackHeight = this.scrollTrack.clientHeight;
+        const thumbHeight = this.scrollThumb.clientHeight;
+        
+        const scrollRatio = (clickY - thumbHeight / 2) / (trackHeight - thumbHeight);
+        const scrollableHeight = this.textEditor.scrollHeight - this.textEditor.clientHeight;
+        
+        this.textEditor.scrollTop = Math.max(0, Math.min(scrollableHeight, scrollRatio * scrollableHeight));
+    }
+}
+
 // Hebrew Text Editor JavaScript
 class HebrewTextEditor {
     constructor() {
@@ -16,6 +129,9 @@ class HebrewTextEditor {
         this.initializeEventListeners();
         this.loadFromLocalStorage();
         this.updateCharCount();
+        
+        // Initialize custom scrollbar
+        this.customScrollbar = new CustomScrollbar(this.textEditor);
     }
     
     initializeEventListeners() {

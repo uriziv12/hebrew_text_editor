@@ -133,21 +133,94 @@ header p {
     margin-bottom: 20px;
 }
 
+/* Scroll Container */
+.scroll-container {
+    position: relative;
+    display: flex;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fefefe;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+}
+
+.scroll-container:focus-within {
+    border-color: #3498db;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar {
+    position: relative;
+    width: 20px;
+    background-color: #f8f9fa;
+    border-right: 1px solid #e0e0e0;
+    flex-shrink: 0;
+    order: 1; /* Place on the left side */
+}
+
+.scroll-track {
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 4px;
+    right: 4px;
+    background-color: #ecf0f1;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.scroll-thumb {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background-color: #bdc3c7;
+    border-radius: 6px;
+    cursor: grab;
+    transition: background-color 0.2s ease;
+    min-height: 20px;
+}
+
+.scroll-thumb:hover {
+    background-color: #95a5a6;
+}
+
+.scroll-thumb:active {
+    background-color: #7f8c8d;
+    cursor: grabbing;
+}
+
+/* Text Wrapper */
+.text-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
 /* Text Editor */
 #textEditor {
     width: 100%;
     height: 500px;
     padding: 20px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
+    border: none;
+    border-radius: 0;
     font-size: 16px;
     font-family: 'Courier New', 'Consolas', 'Monaco', 'Lucida Console', monospace;
     line-height: 1.8;
     direction: rtl;
     text-align: right;
-    resize: vertical;
-    background-color: #fefefe;
-    transition: border-color 0.3s ease;
+    resize: none;
+    background-color: transparent;
+    outline: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Hide default scrollbar for WebKit browsers */
+#textEditor::-webkit-scrollbar {
+    display: none;
 }
 
 #textEditor:focus {
@@ -213,6 +286,60 @@ header p {
     
     header h1 {
         font-size: 2em;
+    }
+    
+    /* Mobile-specific scrollbar adjustments */
+    .custom-scrollbar {
+        width: 24px; /* Slightly wider for easier touch interaction */
+    }
+    
+    .scroll-track {
+        left: 6px;
+        right: 6px;
+    }
+    
+    .scroll-thumb {
+        min-height: 30px; /* Larger minimum height for touch */
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .custom-scrollbar {
+        width: 28px; /* Even wider for touch devices */
+    }
+    
+    .scroll-track {
+        left: 8px;
+        right: 8px;
+    }
+    
+    .scroll-thumb {
+        min-height: 40px; /* Larger for better touch interaction */
+        background-color: #95a5a6; /* More visible by default on touch */
+    }
+    
+    .scroll-thumb:active {
+        background-color: #7f8c8d;
+        transform: scale(1.1); /* Visual feedback for touch */
+    }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+    .custom-scrollbar {
+        width: 20px; /* Reduce width to save space */
+    }
+    
+    .scroll-track {
+        left: 4px;
+        right: 4px;
+    }
+    
+    #textEditor {
+        height: 350px;
+        padding: 15px;
+        font-size: 13px;
     }
 }
 

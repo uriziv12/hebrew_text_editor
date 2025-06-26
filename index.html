@@ -31,13 +31,22 @@
         </div>
         
         <div class="editor-container">
-            <textarea 
-                id="textEditor" 
-                placeholder="התחל לכתוב כאן טקסט בעברית...
+            <div class="scroll-container">
+                <div class="custom-scrollbar">
+                    <div class="scroll-track">
+                        <div class="scroll-thumb"></div>
+                    </div>
+                </div>
+                <div class="text-wrapper">
+                    <textarea 
+                        id="textEditor" 
+                        placeholder="התחל לכתוב כאן טקסט בעברית...
 Start typing Hebrew text here..."
-                dir="rtl"
-                lang="he"
-            ></textarea>
+                        dir="rtl"
+                        lang="he"
+                    ></textarea>
+                </div>
+            </div>
         </div>
         
         <div class="status-bar">
